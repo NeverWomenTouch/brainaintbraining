@@ -1265,17 +1265,16 @@ function library:Window(title, version, info, preset, closebind)
             return toggle
         end
         
- function tabcontent:KeybindT(text, default, keybind, callback, flag)
+function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local flag = flag or text
     local toggled = default or false
     local assignedKey = keybind or Enum.KeyCode.Unknown
     local SelectingKey = false
     local MenuOpen = false
-    local keybindMode = "Toggle" 
+    local keybindMode = "Toggle"
     local keyState = false
     local isChangingMode = false
-    local keybindId = tostring(math.random(1, 10000000)) .. text
-    
+
     local Toggle = Instance.new("TextButton")
     local ToggleCorner = Instance.new("UICorner")
     local ToggleTitle = Instance.new("TextLabel")
@@ -1380,10 +1379,10 @@ function library:Window(title, version, info, preset, closebind)
     KeybindDisplay.TextSize = 16
     KeybindDisplay.ZIndex = 5
     KeybindDisplay.AutoButtonColor = false
-    
+
     KeybindDisplayCorner.CornerRadius = UDim.new(0, 4)
     KeybindDisplayCorner.Parent = KeybindDisplay
-    
+
     KeybindDisplayStroke.Parent = KeybindDisplay
     KeybindDisplayStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     KeybindDisplayStroke.Color = PresetColor
@@ -1399,11 +1398,11 @@ function library:Window(title, version, info, preset, closebind)
     DropdownContent.Size = UDim2.new(1, 0, 0, 88)
     DropdownContent.Visible = true
     DropdownContent.ZIndex = 2
-    
+
     local DropdownContentCorner = Instance.new("UICorner")
     DropdownContentCorner.CornerRadius = UDim.new(0, 5)
     DropdownContentCorner.Parent = DropdownContent
-    
+
     local DropdownContentLayout = Instance.new("UIListLayout")
     DropdownContentLayout.Parent = DropdownContent
     DropdownContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1419,7 +1418,7 @@ function library:Window(title, version, info, preset, closebind)
     Separator.Position = UDim2.new(0, 10, 0, 5)
     Separator.ZIndex = 2
     Separator.LayoutOrder = 0
-    
+
     local KeybindSection = Instance.new("Frame")
     KeybindSection.Name = "KeybindSection"
     KeybindSection.Parent = DropdownContent
@@ -1427,7 +1426,7 @@ function library:Window(title, version, info, preset, closebind)
     KeybindSection.Size = UDim2.new(0.95, 0, 0, 35)
     KeybindSection.ZIndex = 2
     KeybindSection.LayoutOrder = 1
-    
+
     local KeybindLabel = Instance.new("TextLabel")
     KeybindLabel.Name = "KeybindLabel"
     KeybindLabel.Parent = KeybindSection
@@ -1440,7 +1439,7 @@ function library:Window(title, version, info, preset, closebind)
     KeybindLabel.TextSize = 14
     KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
     KeybindLabel.ZIndex = 2
-    
+
     local KeybindButton = Instance.new("TextButton")
     KeybindButton.Name = "KeybindButton"
     KeybindButton.Parent = KeybindSection
@@ -1453,17 +1452,17 @@ function library:Window(title, version, info, preset, closebind)
     KeybindButton.TextSize = 13
     KeybindButton.ZIndex = 2
     KeybindButton.AutoButtonColor = false
-    
+
     local KeybindButtonCorner = Instance.new("UICorner")
     KeybindButtonCorner.CornerRadius = UDim.new(0, 4)
     KeybindButtonCorner.Parent = KeybindButton
-    
+
     local KeybindButtonStroke = Instance.new("UIStroke")
     KeybindButtonStroke.Parent = KeybindButton
     KeybindButtonStroke.Color = PresetColor
     KeybindButtonStroke.Thickness = 1
     KeybindButtonStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-    
+
     local ModeSection = Instance.new("Frame")
     ModeSection.Name = "ModeSection"
     ModeSection.Parent = DropdownContent
@@ -1471,7 +1470,7 @@ function library:Window(title, version, info, preset, closebind)
     ModeSection.Size = UDim2.new(0.95, 0, 0, 35)
     ModeSection.ZIndex = 2
     ModeSection.LayoutOrder = 2
-    
+
     local ModeLabel = Instance.new("TextLabel")
     ModeLabel.Name = "ModeLabel"
     ModeLabel.Parent = ModeSection
@@ -1484,7 +1483,7 @@ function library:Window(title, version, info, preset, closebind)
     ModeLabel.TextSize = 14
     ModeLabel.TextXAlignment = Enum.TextXAlignment.Left
     ModeLabel.ZIndex = 2
-    
+
     local ModeHolder = Instance.new("Frame")
     ModeHolder.Name = "ModeHolder"
     ModeHolder.Parent = ModeSection
@@ -1492,16 +1491,16 @@ function library:Window(title, version, info, preset, closebind)
     ModeHolder.Position = UDim2.new(0.5, 0, 0, 0)
     ModeHolder.Size = UDim2.new(0.45, 0, 1, 0)
     ModeHolder.ZIndex = 2
-    
+
     local ModeLayout = Instance.new("UIListLayout")
     ModeLayout.Parent = ModeHolder
     ModeLayout.FillDirection = Enum.FillDirection.Horizontal
     ModeLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     ModeLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ModeLayout.Padding = UDim.new(0, 5)
-    
+
     local modeButtons = {}
-    
+
     local function createModeButton(name, order)
         local ModeButton = Instance.new("TextButton")
         ModeButton.Name = name .. "Button"
@@ -1516,16 +1515,16 @@ function library:Window(title, version, info, preset, closebind)
         ModeButton.LayoutOrder = order
         ModeButton.ZIndex = 2
         ModeButton.AutoButtonColor = false
-        
+
         local ModeButtonCorner = Instance.new("UICorner")
         ModeButtonCorner.CornerRadius = UDim.new(0, 4)
         ModeButtonCorner.Parent = ModeButton
-        
+
         modeButtons[name] = ModeButton
-        
+
         return ModeButton
     end
-    
+
     local ToggleButton = createModeButton("Toggle", 1)
     local HoldButton = createModeButton("Hold", 2)
     local AlwaysButton = createModeButton("Always", 3)
@@ -1535,60 +1534,16 @@ function library:Window(title, version, info, preset, closebind)
             FrameToggle3.BackgroundColor3 = PresetColor
             KeybindButtonStroke.Color = PresetColor
             KeybindDisplayStroke.Color = PresetColor
-            
             for mode, button in pairs(modeButtons) do
                 if mode == keybindMode then
                     button.BackgroundColor3 = PresetColor
                 end
             end
-            
             task.wait()
         end
     end)()
 
-    if not library.keybindRegistry then
-        library.keybindRegistry = {}
-        
-        library.Conn[#library.Conn + 1] = uis.InputBegan:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
-            
-            for id, kb in pairs(library.keybindRegistry) do
-                if kb.selecting then continue end
-                if kb.keyCode and input.KeyCode == kb.keyCode and kb.toggled then
-                    if kb.mode == "Toggle" then
-                        kb.state = not kb.state
-                        kb.object.keyState = kb.state
-                        pcall(kb.callback, kb.state)
-                    elseif kb.mode == "Hold" then
-                        kb.isHolding = true
-                        kb.state = true
-                        kb.object.keyState = kb.state
-                        pcall(kb.callback, kb.state)
-                    end
-                end
-            end
-        end)
-        
-        library.Conn[#library.Conn + 1] = uis.InputEnded:Connect(function(input, gameProcessed)
-            if gameProcessed then return end
-            if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
-            
-            for id, kb in pairs(library.keybindRegistry) do
-                if kb.keyCode and input.KeyCode == kb.keyCode and kb.mode == "Hold" and kb.isHolding then
-                    kb.isHolding = false
-                    if kb.toggled then
-                        kb.state = false
-                        kb.object.keyState = kb.state
-                        pcall(kb.callback, kb.state)
-                    end
-                end
-            end
-        end)
-    end
-
     local keybindT = {
-        id = keybindId,
         value = toggled,
         keyCode = assignedKey,
         mode = keybindMode,
@@ -1599,22 +1554,16 @@ function library:Window(title, version, info, preset, closebind)
                 self.value = state
                 return self
             end
-            
             if type(state) == "table" then
                 if type(state.value) == "boolean" then
                     ToggleState(state.value)
                     self.value = state.value
                 end
-                
                 if typeof(state.keyCode) == "EnumItem" and state.keyCode.EnumType == Enum.KeyCode then
                     assignedKey = state.keyCode
                     self.keyCode = state.keyCode
                     KeybindDisplay.Text = "[" .. (state.keyCode.Name == "Unknown" and "None" or state.keyCode.Name) .. "]"
                     KeybindButton.Text = state.keyCode.Name == "Unknown" and "None" or state.keyCode.Name
-                    
-                    if library.keybindRegistry[keybindId] then
-                        library.keybindRegistry[keybindId].keyCode = state.keyCode
-                    end
                 elseif type(state.keyCode) == "string" then
                     local success, keyEnum = pcall(function()
                         return Enum.KeyCode[state.keyCode]
@@ -1624,36 +1573,23 @@ function library:Window(title, version, info, preset, closebind)
                         self.keyCode = keyEnum
                         KeybindDisplay.Text = "[" .. (keyEnum.Name == "Unknown" and "None" or keyEnum.Name) .. "]"
                         KeybindButton.Text = keyEnum.Name == "Unknown" and "None" or keyEnum.Name
-                        
-                        if library.keybindRegistry[keybindId] then
-                            library.keybindRegistry[keybindId].keyCode = keyEnum
-                        end
                     end
                 end
-                
                 if type(state.mode) == "string" and (state.mode == "Toggle" or state.mode == "Hold" or state.mode == "Always") then
                     self:setMode(state.mode)
                 end
-                
                 if type(state.keyState) == "boolean" then
                     self:setKeyState(state.keyState)
                 end
-                
                 return self
             end
-            
             if typeof(state) == "EnumItem" and state.EnumType == Enum.KeyCode then
                 assignedKey = state
                 self.keyCode = state
                 KeybindDisplay.Text = "[" .. (state.Name == "Unknown" and "None" or state.Name) .. "]"
                 KeybindButton.Text = state.Name == "Unknown" and "None" or state.Name
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].keyCode = state
-                end
                 return self
             end
-            
             return self
         end,
         setKey = function(self, key)
@@ -1662,10 +1598,6 @@ function library:Window(title, version, info, preset, closebind)
                 self.keyCode = key
                 KeybindDisplay.Text = "[" .. (key.Name == "Unknown" and "None" or key.Name) .. "]"
                 KeybindButton.Text = key.Name == "Unknown" and "None" or key.Name
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].keyCode = key
-                end
             elseif typeof(key) == "string" then
                 local success, keyEnum = pcall(function()
                     return Enum.KeyCode[key]
@@ -1675,10 +1607,6 @@ function library:Window(title, version, info, preset, closebind)
                     self.keyCode = keyEnum
                     KeybindDisplay.Text = "[" .. (keyEnum.Name == "Unknown" and "None" or keyEnum.Name) .. "]"
                     KeybindButton.Text = keyEnum.Name == "Unknown" and "None" or keyEnum.Name
-                    
-                    if library.keybindRegistry[keybindId] then
-                        library.keybindRegistry[keybindId].keyCode = keyEnum
-                    end
                 end
             end
             return self
@@ -1688,15 +1616,9 @@ function library:Window(title, version, info, preset, closebind)
                 if mode == keybindMode then
                     return self
                 end
-                
                 local oldMode = keybindMode
                 keybindMode = mode
                 self.mode = mode
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].mode = mode
-                end
-                
                 for modeName, button in pairs(modeButtons) do
                     if modeName == keybindMode then
                         button.BackgroundColor3 = PresetColor
@@ -1708,24 +1630,13 @@ function library:Window(title, version, info, preset, closebind)
                         button.TextColor3 = Color3.fromRGB(255, 255, 255)
                     end
                 end
-                
                 if keybindMode == "Always" and toggled then
                     keyState = true
                     self.keyState = true
-                    
-                    if library.keybindRegistry[keybindId] then
-                        library.keybindRegistry[keybindId].state = true
-                    end
-                    
                     pcall(callback, true)
                 elseif oldMode == "Always" and toggled then
                     keyState = false
                     self.keyState = false
-                    
-                    if library.keybindRegistry[keybindId] then
-                        library.keybindRegistry[keybindId].state = false
-                    end
-                    
                     pcall(callback, false)
                 end
             end
@@ -1736,21 +1647,10 @@ function library:Window(title, version, info, preset, closebind)
                 if keybindMode == "Always" and not toggled then
                     keyState = false
                     self.keyState = false
-                    
-                    if library.keybindRegistry[keybindId] then
-                        library.keybindRegistry[keybindId].state = false
-                    end
-                    
                     return self
                 end
-                
                 keyState = state
                 self.keyState = state
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].state = state
-                end
-                
                 pcall(callback, keyState)
             end
             return self
@@ -1787,140 +1687,96 @@ function library:Window(title, version, info, preset, closebind)
 
     function ToggleState(state)
         toggled = state
-        
-        if library.keybindRegistry[keybindId] then
-            library.keybindRegistry[keybindId].toggled = state
-        end
-        
         if toggled then
             FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
             FrameToggle3.BackgroundTransparency = 0
-            
             if keybindMode == "Always" then
                 keyState = true
                 keybindT.keyState = true
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].state = true
-                end
-                
                 pcall(callback, true)
             end
         else
             FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
             FrameToggle3.BackgroundTransparency = 1
-            
             if keybindMode == "Always" or keybindMode == "Hold" then
                 keyState = false
                 keybindT.keyState = false
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].state = false
-                end
-                
                 pcall(callback, false)
             elseif keybindMode == "Toggle" and keyState then
                 keyState = false
                 keybindT.keyState = false
-                
-                if library.keybindRegistry[keybindId] then
-                    library.keybindRegistry[keybindId].state = false
-                end
-                
                 pcall(callback, false)
             end
         end
-        
         keybindT.value = toggled
     end
-    
-    library.keybindRegistry[keybindId] = {
-        id = keybindId,
-        keyCode = assignedKey,
-        toggled = toggled,
-        mode = keybindMode,
-        state = keyState,
-        isHolding = false,
-        selecting = false,
-        callback = callback,
-        object = keybindT
-    }
-    
+
     if not library.flags then library.flags = {} end
     library.flags[flag] = keybindT
 
     local function ToggleMenu()
         MenuOpen = not MenuOpen
-        
         if MenuOpen then
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
                 {Size = UDim2.new(0, 363, 0, 140)}):Play()
-            
             task.delay(0.05, function()
                 Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 98)
             end)
         else
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
                 {Size = UDim2.new(0, 363, 0, 42)}):Play()
-            
             task.delay(0.25, function()
                 Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
             end)
         end
     end
 
+    local isHolding = false
+
     library.Conn[#library.Conn + 1] = Toggle.MouseButton1Click:Connect(function()
         if not SelectingKey then
             ToggleState(not toggled)
         end
     end)
-    
+
     library.Conn[#library.Conn + 1] = Toggle.MouseButton2Click:Connect(function()
         ToggleMenu()
     end)
-    
+
     library.Conn[#library.Conn + 1] = KeybindDisplay.MouseButton1Click:Connect(function()
         ToggleMenu()
     end)
-    
+
     library.Conn[#library.Conn + 1] = KeybindDisplay.MouseEnter:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
     end)
-    
+
     library.Conn[#library.Conn + 1] = KeybindDisplay.MouseLeave:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.6}):Play()
     end)
-    
+
     library.Conn[#library.Conn + 1] = KeybindButton.MouseButton1Click:Connect(function()
         if SelectingKey then return end
-        
         SelectingKey = true
-        library.keybindRegistry[keybindId].selecting = true
         KeybindButton.Text = "..."
-        
         local connection
         connection = uis.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.Keyboard then
                 assignedKey = input.KeyCode
                 keybindT.keyCode = assignedKey
-                library.keybindRegistry[keybindId].keyCode = assignedKey
                 KeybindDisplay.Text = "[" .. assignedKey.Name .. "]"
                 KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
                 SelectingKey = false
-                library.keybindRegistry[keybindId].selecting = false
-                
                 if connection then
                     connection:Disconnect()
                 end
             end
         end)
-        
         task.delay(5, function()
             if SelectingKey then
                 SelectingKey = false
-                library.keybindRegistry[keybindId].selecting = false
                 if connection then
                     connection:Disconnect()
                 end
@@ -1928,7 +1784,7 @@ function library:Window(title, version, info, preset, closebind)
             end
         end)
     end)
-    
+
     library.Conn[#library.Conn + 1] = ToggleButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
@@ -1937,7 +1793,7 @@ function library:Window(title, version, info, preset, closebind)
             isChangingMode = false
         end)
     end)
-    
+
     library.Conn[#library.Conn + 1] = HoldButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
@@ -1946,7 +1802,7 @@ function library:Window(title, version, info, preset, closebind)
             isChangingMode = false
         end)
     end)
-    
+
     library.Conn[#library.Conn + 1] = AlwaysButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
@@ -1955,41 +1811,77 @@ function library:Window(title, version, info, preset, closebind)
             isChangingMode = false
         end)
     end)
-    
+
     for _, button in pairs(modeButtons) do
         library.Conn[#library.Conn + 1] = button.MouseEnter:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
             end
         end)
-        
         library.Conn[#library.Conn + 1] = button.MouseLeave:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
             end
         end)
     end
-    
+
     library.Conn[#library.Conn + 1] = KeybindButton.MouseEnter:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
     end)
-    
+
     library.Conn[#library.Conn + 1] = KeybindButton.MouseLeave:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
     end)
-    
-    library.Conn[#library.Conn + 1] = Tab.AncestorRemoving:Connect(function(ancestor)
-        if ancestor == Tab then
-            library.keybindRegistry[keybindId] = nil
+
+    -- FIX: Use a unique connection for each keybindT
+    local inputBeganConn, inputEndedConn
+
+    inputBeganConn = uis.InputBegan:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+        if SelectingKey then return end
+        if assignedKey == nil or input.KeyCode ~= assignedKey then return end
+        if not toggled then return end
+        if keybindMode == "Toggle" then
+            keyState = not keyState
+            keybindT.keyState = keyState
+            pcall(callback, keyState)
+        elseif keybindMode == "Hold" then
+            isHolding = true
+            keyState = true
+            keybindT.keyState = keyState
+            pcall(callback, keyState)
         end
     end)
+
+    inputEndedConn = uis.InputEnded:Connect(function(input, gameProcessed)
+        if gameProcessed then return end
+        if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+        if assignedKey == nil or input.KeyCode ~= assignedKey then return end
+        if keybindMode == "Hold" and isHolding then
+            isHolding = false
+            if toggled then
+                keyState = false
+                keybindT.keyState = keyState
+                pcall(callback, keyState)
+            end
+        end
+    end)
+
+    table.insert(library.Conn, inputBeganConn)
+    table.insert(library.Conn, inputEndedConn)
 
     if default then
         ToggleState(true)
     end
 
     Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
-    
+
+    keybindT._disconnect = function()
+        if inputBeganConn then inputBeganConn:Disconnect() end
+        if inputEndedConn then inputEndedConn:Disconnect() end
+    end
+
     return keybindT
 end
 
