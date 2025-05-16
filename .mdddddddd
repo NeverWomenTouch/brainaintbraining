@@ -3571,6 +3571,17 @@ function library:ConfigSystem(tab, name)
         elseif typ == "EnumItem" then
             return {__type="EnumItem", enumType=tostring(val.EnumType), value=val.Name}
         elseif typ == "table" then
+            -- Handle KeybindT objects specifically
+            if type(val.set) == "function" and val.keyCode and val.mode and (val.value ~= nil or val.keyState ~= nil) then
+                return {
+                    __type = "KeybindT",
+                    toggleState = val.value,
+                    keyCode = typeof(val.keyCode) == "EnumItem" and val.keyCode.Name or "Unknown",
+                    mode = val.mode,
+                    keyState = val.keyState
+                }
+            end
+            
             if type(val.getValue) == "function" then
                 local value = val:getValue()
                 if type(value) == "number" then
@@ -3627,6 +3638,13 @@ function library:ConfigSystem(tab, name)
         elseif val.__type == "EnumItem" then
             local enumName = val.enumType:match("Enum%.([^%s]+)$") or val.enumType:match("Enum%.([^%s]+)")
             return enumName and Enum[enumName] and Enum[enumName][val.value]
+        elseif val.__type == "KeybindT" then
+            return {
+                value = val.toggleState,
+                keyCode = Enum.KeyCode[val.keyCode] or Enum.KeyCode.Unknown,
+                mode = val.mode,
+                keyState = val.keyState
+            }
         elseif val.__type == "Keybind" then
             local keyEnum
             if val.keyCode and val.keyCode.__type == "EnumItem" then
@@ -3838,7 +3856,16 @@ function library:ConfigSystem(tab, name)
                 local element = library.flags[flag]
                 local success, result = pcall(function()
                     if type(element) == "table" and type(element.set) == "function" then
-                                               if type(val) == "table" and val.__type == "Color3" then
+                        -- Handle KeybindT objects
+                        if type(val) == "table" and val.__type == "KeybindT" then
+                            element:set({
+                                value = val.toggleState,
+                                keyCode = Enum.KeyCode[val.keyCode] or Enum.KeyCode.Unknown,
+                                mode = val.mode,
+                                keyState = val.keyState
+                            })
+                        -- Existing handlers for other object types
+                        elseif type(val) == "table" and val.__type == "Color3" then
                             element:set(Color3.new(val.r, val.g, val.b))
                         elseif type(val) == "table" and val.__type == "Keybind" then
                             local keyEnum
@@ -3958,7 +3985,16 @@ function library:ConfigSystem(tab, name)
                     local element = library.flags[flag]
                     local success, result = pcall(function()
                         if type(element) == "table" and type(element.set) == "function" then
-                            if type(val) == "table" and val.__type == "Color3" then
+                            -- Handle KeybindT objects
+                            if type(val) == "table" and val.__type == "KeybindT" then
+                                element:set({
+                                    value = val.toggleState,
+                                    keyCode = Enum.KeyCode[val.keyCode] or Enum.KeyCode.Unknown,
+                                    mode = val.mode,
+                                    keyState = val.keyState
+                                })
+                            -- Existing handlers for other object types
+                            elseif type(val) == "table" and val.__type == "Color3" then
                                 element:set(Color3.new(val.r, val.g, val.b))
                             elseif type(val) == "table" and val.__type == "Keybind" then
                                 local keyEnum
