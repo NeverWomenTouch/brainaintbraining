@@ -1589,8 +1589,13 @@ function library:Window(title, version, info, preset, closebind)
                         self.value = state
                         return self
                     end
+                    
                     if type(state) == "table" then
-                        -- Set keyCode first
+                        if type(state.value) == "boolean" then
+                            ToggleState(state.value)
+                            self.value = state.value
+                        end
+                        
                         if typeof(state.keyCode) == "EnumItem" and state.keyCode.EnumType == Enum.KeyCode then
                             assignedKey = state.keyCode
                             self.keyCode = state.keyCode
@@ -1607,21 +1612,18 @@ function library:Window(title, version, info, preset, closebind)
                                 KeybindButton.Text = keyEnum.Name == "Unknown" and "None" or keyEnum.Name
                             end
                         end
-                        -- Set mode next
+                        
                         if type(state.mode) == "string" and (state.mode == "Toggle" or state.mode == "Hold" or state.mode == "Always") then
                             self:setMode(state.mode)
                         end
-                        -- Set toggle state last
-                        if type(state.value) == "boolean" then
-                            ToggleState(state.value)
-                            self.value = state.value
-                        end
-                        -- Set keyState if present
+                        
                         if type(state.keyState) == "boolean" then
                             self:setKeyState(state.keyState)
                         end
+                        
                         return self
                     end
+                    
                     if typeof(state) == "EnumItem" and state.EnumType == Enum.KeyCode then
                         assignedKey = state
                         self.keyCode = state
@@ -1629,6 +1631,7 @@ function library:Window(title, version, info, preset, closebind)
                         KeybindButton.Text = state.Name == "Unknown" and "None" or state.Name
                         return self
                     end
+                    
                     return self
                 end,
                 setKey = function(self, key)
@@ -1652,10 +1655,14 @@ function library:Window(title, version, info, preset, closebind)
                 end,
                 setMode = function(self, mode)
                     if type(mode) == "string" and (mode == "Toggle" or mode == "Hold" or mode == "Always") then
-                        if mode == keybindMode then return self end
+                        if mode == keybindMode then
+                            return self
+                        end
+                        
                         local oldMode = keybindMode
                         keybindMode = mode
                         self.mode = mode
+                        
                         for modeName, button in pairs(modeButtons) do
                             if modeName == keybindMode then
                                 button.BackgroundColor3 = PresetColor
@@ -1667,6 +1674,7 @@ function library:Window(title, version, info, preset, closebind)
                                 button.TextColor3 = Color3.fromRGB(255, 255, 255)
                             end
                         end
+                        
                         if keybindMode == "Always" and toggled then
                             keyState = true
                             self.keyState = true
@@ -1686,6 +1694,7 @@ function library:Window(title, version, info, preset, closebind)
                             self.keyState = false
                             return self
                         end
+                        
                         keyState = state
                         self.keyState = state
                         pcall(callback, keyState)
@@ -1693,7 +1702,9 @@ function library:Window(title, version, info, preset, closebind)
                     return self
                 end,
                 toggleKeyState = function(self)
-                    if keybindMode == "Always" then return self end
+                    if keybindMode == "Always" then
+                        return self
+                    end
                     return self:setKeyState(not keyState)
                 end,
                 getKeyState = function(self)
@@ -1704,11 +1715,15 @@ function library:Window(title, version, info, preset, closebind)
                     return self
                 end,
                 enable = function(self)
-                    if not toggled then self:set(true) end
+                    if not toggled then
+                        self:set(true)
+                    end
                     return self
                 end,
                 disable = function(self)
-                    if toggled then self:set(false) end
+                    if toggled then
+                        self:set(false)
+                    end
                     return self
                 end,
                 getState = function(self)
