@@ -1733,31 +1733,31 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
 
     local isHolding = false
 
-    library.Conn[#library.Conn + 1] = Toggle.MouseButton1Click:Connect(function()
+    Toggle.MouseButton1Click:Connect(function()
         if not SelectingKey then
             ToggleState(not toggled)
         end
     end)
 
-    library.Conn[#library.Conn + 1] = Toggle.MouseButton2Click:Connect(function()
+    Toggle.MouseButton2Click:Connect(function()
         ToggleMenu()
     end)
 
-    library.Conn[#library.Conn + 1] = KeybindDisplay.MouseButton1Click:Connect(function()
+    KeybindDisplay.MouseButton1Click:Connect(function()
         ToggleMenu()
     end)
 
-    library.Conn[#library.Conn + 1] = KeybindDisplay.MouseEnter:Connect(function()
+    KeybindDisplay.MouseEnter:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
     end)
 
-    library.Conn[#library.Conn + 1] = KeybindDisplay.MouseLeave:Connect(function()
+    KeybindDisplay.MouseLeave:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.6}):Play()
     end)
 
-    library.Conn[#library.Conn + 1] = KeybindButton.MouseButton1Click:Connect(function()
+    KeybindButton.MouseButton1Click:Connect(function()
         if SelectingKey then return end
         SelectingKey = true
         KeybindButton.Text = "..."
@@ -1785,7 +1785,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end)
     end)
 
-    library.Conn[#library.Conn + 1] = ToggleButton.MouseButton1Click:Connect(function()
+    ToggleButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
         keybindT:setMode("Toggle")
@@ -1794,7 +1794,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end)
     end)
 
-    library.Conn[#library.Conn + 1] = HoldButton.MouseButton1Click:Connect(function()
+    HoldButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
         keybindT:setMode("Hold")
@@ -1803,7 +1803,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end)
     end)
 
-    library.Conn[#library.Conn + 1] = AlwaysButton.MouseButton1Click:Connect(function()
+    AlwaysButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
         isChangingMode = true
         keybindT:setMode("Always")
@@ -1813,27 +1813,26 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     end)
 
     for _, button in pairs(modeButtons) do
-        library.Conn[#library.Conn + 1] = button.MouseEnter:Connect(function()
+        button.MouseEnter:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
             end
         end)
-        library.Conn[#library.Conn + 1] = button.MouseLeave:Connect(function()
+        button.MouseLeave:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
             end
         end)
     end
 
-    library.Conn[#library.Conn + 1] = KeybindButton.MouseEnter:Connect(function()
+    KeybindButton.MouseEnter:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
     end)
 
-    library.Conn[#library.Conn + 1] = KeybindButton.MouseLeave:Connect(function()
+    KeybindButton.MouseLeave:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
     end)
 
-    -- FIX: Use a unique connection for each keybindT
     local inputBeganConn, inputEndedConn
 
     inputBeganConn = uis.InputBegan:Connect(function(input, gameProcessed)
@@ -1868,19 +1867,16 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end
     end)
 
-    table.insert(library.Conn, inputBeganConn)
-    table.insert(library.Conn, inputEndedConn)
+    keybindT._disconnect = function()
+        if inputBeganConn then inputBeganConn:Disconnect() end
+        if inputEndedConn then inputEndedConn:Disconnect() end
+    end
 
     if default then
         ToggleState(true)
     end
 
     Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
-
-    keybindT._disconnect = function()
-        if inputBeganConn then inputBeganConn:Disconnect() end
-        if inputEndedConn then inputEndedConn:Disconnect() end
-    end
 
     return keybindT
 end
