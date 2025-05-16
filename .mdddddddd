@@ -1269,15 +1269,14 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local flag = flag or text
     local toggled = default or false
     local assignedKey = keybind or Enum.KeyCode.Unknown
-    local SelectingKey = false
-    local MenuOpen = false
     local keybindMode = "Toggle"
     local keyState = false
-    local isChangingMode = false
     local uniqueId = tostring(math.random(1, 1000000)) .. text
-
+    
+    -- Create UI elements
     local Toggle = Instance.new("TextButton")
     local ToggleCorner = Instance.new("UICorner")
+    local FixedElements = Instance.new("Frame")
     local ToggleTitle = Instance.new("TextLabel")
     local FrameToggle1 = Instance.new("Frame")
     local FrameToggle1Corner = Instance.new("UICorner")
@@ -1290,7 +1289,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local KeybindDisplay = Instance.new("TextButton")
     local KeybindDisplayCorner = Instance.new("UICorner")
     local KeybindDisplayStroke = Instance.new("UIStroke")
-
+    
     Toggle.Name = "Toggle_" .. uniqueId
     Toggle.Parent = Tab
     Toggle.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
@@ -1302,19 +1301,18 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     Toggle.TextColor3 = Color3.fromRGB(0, 0, 0)
     Toggle.TextSize = 14
     Toggle.ClipsDescendants = true
-
+    
     ToggleCorner.CornerRadius = UDim.new(0, 5)
     ToggleCorner.Name = "ToggleCorner"
     ToggleCorner.Parent = Toggle
-
-    local FixedElements = Instance.new("Frame")
+    
     FixedElements.Name = "FixedElements"
     FixedElements.Parent = Toggle
     FixedElements.BackgroundTransparency = 1
     FixedElements.Size = UDim2.new(1, 0, 0, 42)
     FixedElements.ZIndex = 5
     FixedElements.ClipsDescendants = false
-
+    
     ToggleTitle.Name = "ToggleTitle"
     ToggleTitle.Parent = FixedElements
     ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1327,47 +1325,47 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     ToggleTitle.TextSize = 18
     ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
     ToggleTitle.ZIndex = 5
-
+    
     FrameToggle1.Name = "FrameToggle1"
     FrameToggle1.Parent = FixedElements
     FrameToggle1.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     FrameToggle1.Position = UDim2.new(0.85, 0, 0.5, -9)
     FrameToggle1.Size = UDim2.new(0, 37, 0, 18)
     FrameToggle1.ZIndex = 5
-
+    
     FrameToggle1Corner.Name = "FrameToggle1Corner"
     FrameToggle1Corner.Parent = FrameToggle1
-
+    
     FrameToggle2.Name = "FrameToggle2"
     FrameToggle2.Parent = FrameToggle1
     FrameToggle2.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
     FrameToggle2.Position = UDim2.new(0.05, 0, 0.1, 0)
     FrameToggle2.Size = UDim2.new(0, 33, 0, 14)
     FrameToggle2.ZIndex = 5
-
+    
     FrameToggle2Corner.Name = "FrameToggle2Corner"
     FrameToggle2Corner.Parent = FrameToggle2
-
+    
     FrameToggle3.Name = "FrameToggle3"
     FrameToggle3.Parent = FrameToggle1
     FrameToggle3.BackgroundColor3 = PresetColor
     FrameToggle3.BackgroundTransparency = 1.000
     FrameToggle3.Size = UDim2.new(0, 37, 0, 18)
     FrameToggle3.ZIndex = 5
-
+    
     FrameToggle3Corner.Name = "FrameToggle3Corner"
     FrameToggle3Corner.Parent = FrameToggle3
-
+    
     FrameToggleCircle.Name = "FrameToggleCircle"
     FrameToggleCircle.Parent = FrameToggle1
     FrameToggleCircle.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     FrameToggleCircle.Position = UDim2.new(0.127000004, 0, 0.222000003, 0)
     FrameToggleCircle.Size = UDim2.new(0, 10, 0, 10)
     FrameToggleCircle.ZIndex = 5
-
+    
     FrameToggleCircleCorner.Name = "FrameToggleCircleCorner"
     FrameToggleCircleCorner.Parent = FrameToggleCircle
-
+    
     KeybindDisplay.Name = "KeybindDisplay"
     KeybindDisplay.Parent = FixedElements
     KeybindDisplay.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -1380,17 +1378,22 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     KeybindDisplay.TextSize = 16
     KeybindDisplay.ZIndex = 5
     KeybindDisplay.AutoButtonColor = false
-
+    
     KeybindDisplayCorner.CornerRadius = UDim.new(0, 4)
     KeybindDisplayCorner.Parent = KeybindDisplay
-
+    
     KeybindDisplayStroke.Parent = KeybindDisplay
     KeybindDisplayStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     KeybindDisplayStroke.Color = PresetColor
     KeybindDisplayStroke.Transparency = 0.6
     KeybindDisplayStroke.Thickness = 1
-
+    
+    -- Create dropdown menu UI
     local DropdownContent = Instance.new("Frame")
+    local DropdownContentCorner = Instance.new("UICorner")
+    local DropdownContentLayout = Instance.new("UIListLayout")
+    local Separator = Instance.new("Frame")
+    
     DropdownContent.Name = "DropdownContent"
     DropdownContent.Parent = Toggle
     DropdownContent.BackgroundColor3 = Color3.fromRGB(37, 37, 37)
@@ -1399,18 +1402,15 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     DropdownContent.Size = UDim2.new(1, 0, 0, 88)
     DropdownContent.Visible = true
     DropdownContent.ZIndex = 2
-
-    local DropdownContentCorner = Instance.new("UICorner")
+    
     DropdownContentCorner.CornerRadius = UDim.new(0, 5)
     DropdownContentCorner.Parent = DropdownContent
-
-    local DropdownContentLayout = Instance.new("UIListLayout")
+    
     DropdownContentLayout.Parent = DropdownContent
     DropdownContentLayout.SortOrder = Enum.SortOrder.LayoutOrder
     DropdownContentLayout.Padding = UDim.new(0, 5)
     DropdownContentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-    local Separator = Instance.new("Frame")
+    
     Separator.Name = "Separator"
     Separator.Parent = DropdownContent
     Separator.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
@@ -1419,16 +1419,21 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     Separator.Position = UDim2.new(0, 10, 0, 5)
     Separator.ZIndex = 2
     Separator.LayoutOrder = 0
-
+    
+    -- Keybind section
     local KeybindSection = Instance.new("Frame")
+    local KeybindLabel = Instance.new("TextLabel")
+    local KeybindButton = Instance.new("TextButton")
+    local KeybindButtonCorner = Instance.new("UICorner")
+    local KeybindButtonStroke = Instance.new("UIStroke")
+    
     KeybindSection.Name = "KeybindSection"
     KeybindSection.Parent = DropdownContent
     KeybindSection.BackgroundTransparency = 1
     KeybindSection.Size = UDim2.new(0.95, 0, 0, 35)
     KeybindSection.ZIndex = 2
     KeybindSection.LayoutOrder = 1
-
-    local KeybindLabel = Instance.new("TextLabel")
+    
     KeybindLabel.Name = "KeybindLabel"
     KeybindLabel.Parent = KeybindSection
     KeybindLabel.BackgroundTransparency = 1
@@ -1440,8 +1445,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     KeybindLabel.TextSize = 14
     KeybindLabel.TextXAlignment = Enum.TextXAlignment.Left
     KeybindLabel.ZIndex = 2
-
-    local KeybindButton = Instance.new("TextButton")
+    
     KeybindButton.Name = "KeybindButton"
     KeybindButton.Parent = KeybindSection
     KeybindButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
@@ -1453,26 +1457,28 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     KeybindButton.TextSize = 13
     KeybindButton.ZIndex = 2
     KeybindButton.AutoButtonColor = false
-
-    local KeybindButtonCorner = Instance.new("UICorner")
+    
     KeybindButtonCorner.CornerRadius = UDim.new(0, 4)
     KeybindButtonCorner.Parent = KeybindButton
-
-    local KeybindButtonStroke = Instance.new("UIStroke")
+    
     KeybindButtonStroke.Parent = KeybindButton
     KeybindButtonStroke.Color = PresetColor
     KeybindButtonStroke.Thickness = 1
     KeybindButtonStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-
+    
+    -- Mode section
     local ModeSection = Instance.new("Frame")
+    local ModeLabel = Instance.new("TextLabel")
+    local ModeHolder = Instance.new("Frame")
+    local ModeLayout = Instance.new("UIListLayout")
+    
     ModeSection.Name = "ModeSection"
     ModeSection.Parent = DropdownContent
     ModeSection.BackgroundTransparency = 1
     ModeSection.Size = UDim2.new(0.95, 0, 0, 35)
     ModeSection.ZIndex = 2
     ModeSection.LayoutOrder = 2
-
-    local ModeLabel = Instance.new("TextLabel")
+    
     ModeLabel.Name = "ModeLabel"
     ModeLabel.Parent = ModeSection
     ModeLabel.BackgroundTransparency = 1
@@ -1484,24 +1490,23 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     ModeLabel.TextSize = 14
     ModeLabel.TextXAlignment = Enum.TextXAlignment.Left
     ModeLabel.ZIndex = 2
-
-    local ModeHolder = Instance.new("Frame")
+    
     ModeHolder.Name = "ModeHolder"
     ModeHolder.Parent = ModeSection
     ModeHolder.BackgroundTransparency = 1
     ModeHolder.Position = UDim2.new(0.5, 0, 0, 0)
     ModeHolder.Size = UDim2.new(0.45, 0, 1, 0)
     ModeHolder.ZIndex = 2
-
-    local ModeLayout = Instance.new("UIListLayout")
+    
     ModeLayout.Parent = ModeHolder
     ModeLayout.FillDirection = Enum.FillDirection.Horizontal
     ModeLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     ModeLayout.SortOrder = Enum.SortOrder.LayoutOrder
     ModeLayout.Padding = UDim.new(0, 5)
-
+    
+    -- Create mode buttons
     local modeButtons = {}
-
+    
     local function createModeButton(name, order)
         local ModeButton = Instance.new("TextButton")
         ModeButton.Name = name .. "Button_" .. uniqueId
@@ -1516,22 +1521,29 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         ModeButton.LayoutOrder = order
         ModeButton.ZIndex = 2
         ModeButton.AutoButtonColor = false
-
+        
         local ModeButtonCorner = Instance.new("UICorner")
         ModeButtonCorner.CornerRadius = UDim.new(0, 4)
         ModeButtonCorner.Parent = ModeButton
-
+        
         modeButtons[name] = ModeButton
-
+        
         return ModeButton
     end
-
+    
     local ToggleButton = createModeButton("Toggle", 1)
     local HoldButton = createModeButton("Hold", 2)
     local AlwaysButton = createModeButton("Always", 3)
-
-    local updateCoroutine
-    updateCoroutine = coroutine.wrap(function()
+    
+    -- State variables
+    local MenuOpen = false
+    local SelectingKey = false
+    local isHolding = false
+    local isChangingMode = false
+    local connections = {}
+    
+    -- Color update coroutine
+    local updateCoroutine = coroutine.wrap(function()
         while getgenv().libloaded and Toggle and Toggle.Parent do
             FrameToggle3.BackgroundColor3 = PresetColor
             KeybindButtonStroke.Color = PresetColor
@@ -1545,23 +1557,78 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end
     end)
     updateCoroutine()
-
+    
+    -- Main toggle function
+    local function ToggleState(state)
+        toggled = state
+        
+        if toggled then
+            FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
+            FrameToggle3.BackgroundTransparency = 0
+            
+            if keybindMode == "Always" then
+                keyState = true
+                pcall(callback, true)
+            end
+        else
+            FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
+            FrameToggle3.BackgroundTransparency = 1
+            
+            if keybindMode == "Always" or keybindMode == "Hold" then
+                keyState = false
+                pcall(callback, false)
+            elseif keybindMode == "Toggle" and keyState then
+                keyState = false
+                pcall(callback, false)
+            end
+        end
+    end
+    
+    -- Dropdown menu toggle
+    local function ToggleMenu()
+        MenuOpen = not MenuOpen
+        
+        if MenuOpen then
+            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+                {Size = UDim2.new(0, 363, 0, 140)}):Play()
+            
+            task.delay(0.05, function()
+                if Tab and Tab.Parent then
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 98)
+                end
+            end)
+        else
+            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
+                {Size = UDim2.new(0, 363, 0, 42)}):Play()
+            
+            task.delay(0.25, function()
+                if Tab and Tab.Parent then
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                end
+            end)
+        end
+    end
+    
+    -- Create return object
     local keybindT = {
         value = toggled,
         keyCode = assignedKey,
         mode = keybindMode,
         keyState = keyState,
+        
         set = function(self, state)
             if type(state) == "boolean" then
                 ToggleState(state)
                 self.value = state
                 return self
             end
+            
             if type(state) == "table" then
                 if type(state.value) == "boolean" then
                     ToggleState(state.value)
                     self.value = state.value
                 end
+                
                 if typeof(state.keyCode) == "EnumItem" and state.keyCode.EnumType == Enum.KeyCode then
                     assignedKey = state.keyCode
                     self.keyCode = state.keyCode
@@ -1571,6 +1638,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                     local success, keyEnum = pcall(function()
                         return Enum.KeyCode[state.keyCode]
                     end)
+                    
                     if success and keyEnum then
                         assignedKey = keyEnum
                         self.keyCode = keyEnum
@@ -1578,14 +1646,18 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                         KeybindButton.Text = keyEnum.Name == "Unknown" and "None" or keyEnum.Name
                     end
                 end
+                
                 if type(state.mode) == "string" and (state.mode == "Toggle" or state.mode == "Hold" or state.mode == "Always") then
                     self:setMode(state.mode)
                 end
+                
                 if type(state.keyState) == "boolean" then
                     self:setKeyState(state.keyState)
                 end
+                
                 return self
             end
+            
             if typeof(state) == "EnumItem" and state.EnumType == Enum.KeyCode then
                 assignedKey = state
                 self.keyCode = state
@@ -1593,8 +1665,10 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                 KeybindButton.Text = state.Name == "Unknown" and "None" or state.Name
                 return self
             end
+            
             return self
         end,
+        
         setKey = function(self, key)
             if typeof(key) == "EnumItem" and key.EnumType == Enum.KeyCode then
                 assignedKey = key
@@ -1605,6 +1679,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                 local success, keyEnum = pcall(function()
                     return Enum.KeyCode[key]
                 end)
+                
                 if success and keyEnum then
                     assignedKey = keyEnum
                     self.keyCode = keyEnum
@@ -1612,16 +1687,20 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                     KeybindButton.Text = keyEnum.Name == "Unknown" and "None" or keyEnum.Name
                 end
             end
+            
             return self
         end,
+        
         setMode = function(self, mode)
             if type(mode) == "string" and (mode == "Toggle" or mode == "Hold" or mode == "Always") then
                 if mode == keybindMode then
                     return self
                 end
+                
                 local oldMode = keybindMode
                 keybindMode = mode
                 self.mode = mode
+                
                 for modeName, button in pairs(modeButtons) do
                     if button and button.Parent then
                         if modeName == keybindMode then
@@ -1635,6 +1714,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                         end
                     end
                 end
+                
                 if keybindMode == "Always" and toggled then
                     keyState = true
                     self.keyState = true
@@ -1645,8 +1725,10 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                     pcall(callback, false)
                 end
             end
+            
             return self
         end,
+        
         setKeyState = function(self, state)
             if type(state) == "boolean" then
                 if keybindMode == "Always" and not toggled then
@@ -1654,129 +1736,102 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                     self.keyState = false
                     return self
                 end
+                
                 keyState = state
                 self.keyState = state
                 pcall(callback, keyState)
             end
+            
             return self
         end,
+        
         toggleKeyState = function(self)
             if keybindMode == "Always" then
                 return self
             end
+            
             return self:setKeyState(not keyState)
         end,
+        
         getKeyState = function(self)
             return keyState
         end,
+        
         toggle = function(self)
             self:set(not toggled)
             return self
         end,
+        
         enable = function(self)
             if not toggled then
                 self:set(true)
             end
             return self
         end,
+        
         disable = function(self)
             if toggled then
                 self:set(false)
             end
             return self
         end,
+        
         getState = function(self)
             return toggled
         end,
+        
         destroy = function(self)
             self:_disconnect()
             if Toggle and Toggle.Parent then
                 Toggle:Destroy()
             end
+        end,
+        
+        _disconnect = function(self)
+            for _, connection in ipairs(connections) do
+                if connection.Connected then
+                    connection:Disconnect()
+                end
+            end
         end
     }
-
-    function ToggleState(state)
-        toggled = state
-        if toggled then
-            FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
-            FrameToggle3.BackgroundTransparency = 0
-            if keybindMode == "Always" then
-                keyState = true
-                keybindT.keyState = true
-                pcall(callback, true)
-            end
-        else
-            FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
-            FrameToggle3.BackgroundTransparency = 1
-            if keybindMode == "Always" or keybindMode == "Hold" then
-                keyState = false
-                keybindT.keyState = false
-                pcall(callback, false)
-            elseif keybindMode == "Toggle" and keyState then
-                keyState = false
-                keybindT.keyState = false
-                pcall(callback, false)
-            end
-        end
-        keybindT.value = toggled
-    end
-
+    
+    -- Register library flags
     if not library.flags then library.flags = {} end
     library.flags[flag] = keybindT
-
-    local function ToggleMenu()
-        MenuOpen = not MenuOpen
-        if MenuOpen then
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
-                {Size = UDim2.new(0, 363, 0, 140)}):Play()
-            task.delay(0.05, function()
-                if Tab and Tab.Parent then
-                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 98)
-                end
-            end)
-        else
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
-                {Size = UDim2.new(0, 363, 0, 42)}):Play()
-            task.delay(0.25, function()
-                if Tab and Tab.Parent then
-                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
-                end
-            end)
-        end
-    end
-
-    local isHolding = false
-    local connections = {}
-
+    
+    -- Connect UI events
     connections[#connections + 1] = Toggle.MouseButton1Click:Connect(function()
         if not SelectingKey then
             ToggleState(not toggled)
+            keybindT.value = toggled
         end
     end)
-
+    
     connections[#connections + 1] = Toggle.MouseButton2Click:Connect(function()
         ToggleMenu()
     end)
-
+    
     connections[#connections + 1] = KeybindDisplay.MouseButton1Click:Connect(function()
         ToggleMenu()
     end)
-
+    
     connections[#connections + 1] = KeybindDisplay.MouseEnter:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
     end)
-
+    
     connections[#connections + 1] = KeybindDisplay.MouseLeave:Connect(function()
         tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
         tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.6}):Play()
     end)
-
+    
     connections[#connections + 1] = KeybindButton.MouseButton1Click:Connect(function()
         if SelectingKey then return end
+        
         SelectingKey = true
         KeybindButton.Text = "..."
+        
         local connection
         connection = uis.InputBegan:Connect(function(input)
             if input.UserInputType == Enum.UserInputType.Keyboard then
@@ -1785,132 +1840,164 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                 KeybindDisplay.Text = "[" .. assignedKey.Name .. "]"
                 KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
                 SelectingKey = false
+                
                 if connection then
                     connection:Disconnect()
                 end
             end
         end)
+        
         task.delay(5, function()
             if SelectingKey then
                 SelectingKey = false
+                
                 if connection then
                     connection:Disconnect()
                 end
+                
                 KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
             end
         end)
     end)
-
+    
     connections[#connections + 1] = ToggleButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
+        
         isChangingMode = true
         keybindT:setMode("Toggle")
+        
         task.delay(0.3, function()
             isChangingMode = false
         end)
     end)
-
+    
     connections[#connections + 1] = HoldButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
+        
         isChangingMode = true
         keybindT:setMode("Hold")
+        
         task.delay(0.3, function()
             isChangingMode = false
         end)
     end)
-
+    
     connections[#connections + 1] = AlwaysButton.MouseButton1Click:Connect(function()
         if isChangingMode then return end
+        
         isChangingMode = true
         keybindT:setMode("Always")
+        
         task.delay(0.3, function()
             isChangingMode = false
         end)
     end)
-
+    
     for _, button in pairs(modeButtons) do
         connections[#connections + 1] = button.MouseEnter:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
             end
         end)
+        
         connections[#connections + 1] = button.MouseLeave:Connect(function()
             if button.Text ~= keybindMode then
                 tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
             end
         end)
-    end
-
+    }
+    
     connections[#connections + 1] = KeybindButton.MouseEnter:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
     end)
-
+    
     connections[#connections + 1] = KeybindButton.MouseLeave:Connect(function()
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
     end)
-
-    local inputBeganConn, inputEndedConn
-
-    local function handleInputBegan(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
-        if SelectingKey then return end
-        if assignedKey == nil or input.KeyCode ~= assignedKey then return end
-        if not toggled then return end
-        
-        if keybindMode == "Toggle" then
-            keyState = not keyState
-            keybindT.keyState = keyState
-            pcall(callback, keyState)
-        elseif keybindMode == "Hold" then
-            isHolding = true
-            keyState = true
-            keybindT.keyState = keyState
-            pcall(callback, keyState)
-        end
-    end
-
-    local function handleInputEnded(input, gameProcessed)
-        if gameProcessed then return end
-        if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
-        if assignedKey == nil or input.KeyCode ~= assignedKey then return end
-        
-        if keybindMode == "Hold" and isHolding and toggled then
-            isHolding = false
-            keyState = false
-            keybindT.keyState = keyState
-            pcall(callback, keyState)
-        end
-    end
-
-    inputBeganConn = uis.InputBegan:Connect(handleInputBegan)
-    inputEndedConn = uis.InputEnded:Connect(handleInputEnded)
     
-    connections[#connections + 1] = inputBeganConn
-    connections[#connections + 1] = inputEndedConn
-
-    keybindT._disconnect = function()
-        for _, connection in ipairs(connections) do
-            if connection.Connected then
-                connection:Disconnect()
+    -- Create key handler functions
+    local function handleKeybindInput()
+        -- Create a scope-isolated input handler that is unique to this keybind
+        local thisKeybind = {
+            toggle = toggled,
+            key = assignedKey,
+            mode = keybindMode,
+            state = keyState,
+            holding = false
+        }
+        
+        -- Handle key press
+        local function onKeyPress(input, gp)
+            if gp then return end
+            if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+            if SelectingKey then return end
+            
+            -- Make sure this is our specific keybind
+            if input.KeyCode ~= thisKeybind.key then return end
+            
+            -- Only process if toggle is enabled
+            if not thisKeybind.toggle then return end
+            
+            if thisKeybind.mode == "Toggle" then
+                thisKeybind.state = not thisKeybind.state
+                keyState = thisKeybind.state
+                keybindT.keyState = keyState
+                pcall(callback, keyState)
+            elseif thisKeybind.mode == "Hold" then
+                thisKeybind.holding = true
+                thisKeybind.state = true
+                keyState = true
+                keybindT.keyState = true
+                pcall(callback, true)
             end
         end
+        
+        -- Handle key release
+        local function onKeyRelease(input, gp)
+            if gp then return end
+            if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
+            
+            -- Make sure this is our specific keybind
+            if input.KeyCode ~= thisKeybind.key then return end
+            
+            if thisKeybind.mode == "Hold" and thisKeybind.holding and thisKeybind.toggle then
+                thisKeybind.holding = false
+                thisKeybind.state = false
+                keyState = false
+                keybindT.keyState = false
+                pcall(callback, false)
+            end
+        end
+        
+        -- Connect the input handlers
+        local inputBeganConn = uis.InputBegan:Connect(onKeyPress)
+        local inputEndedConn = uis.InputEnded:Connect(onKeyRelease)
+        
+        -- Add connections to our list for cleanup
+        connections[#connections + 1] = inputBeganConn
+        connections[#connections + 1] = inputEndedConn
     end
-
+    
+    -- Initialize key handler
+    handleKeybindInput()
+    
+    -- Register connections with library
     if library.Conn then
         for _, conn in ipairs(connections) do
             table.insert(library.Conn, conn)
         end
     end
-
+    
+    -- Apply default state if provided
     if default then
         ToggleState(true)
     end
-
+    
+    -- Update canvas size
     if Tab and Tab.Parent then
         Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
     end
-
+    
     return keybindT
 end
 
