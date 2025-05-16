@@ -1275,6 +1275,14 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local keyState = false
     local isChangingMode = false
     
+    -- Make sure these variables exist
+    local tweensv = tweensv or game:GetService("TweenService")
+    local uis = uis or game:GetService("UserInputService")
+    local PresetColor = PresetColor or Color3.fromRGB(255, 255, 255)
+    local Tab = Tab or error("Tab is not defined")
+    local TabLayout = TabLayout or error("TabLayout is not defined")
+    local library = library or {flags = {}, Conn = {}}
+    
     local Toggle = Instance.new("TextButton")
     local ToggleCorner = Instance.new("UICorner")
     local ToggleTitle = Instance.new("TextLabel")
@@ -1396,7 +1404,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     DropdownContent.BorderSizePixel = 0
     DropdownContent.Position = UDim2.new(0, 0, 0, 42)
     DropdownContent.Size = UDim2.new(1, 0, 0, 88)
-    DropdownContent.Visible = true
+    DropdownContent.Visible = false
     DropdownContent.ZIndex = 2
     
     local DropdownContentCorner = Instance.new("UICorner")
@@ -1530,7 +1538,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local AlwaysButton = createModeButton("Always", 3)
 
     coroutine.wrap(function()
-        while getgenv().libloaded do
+        while (getgenv().libloaded or true) do
             FrameToggle3.BackgroundColor3 = PresetColor
             KeybindButtonStroke.Color = PresetColor
             KeybindDisplayStroke.Color = PresetColor
@@ -1698,11 +1706,15 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end
     }
 
-    function ToggleState(state)
+    local function ToggleState(state)
         toggled = state
         if toggled then
-            FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
-            FrameToggle3.BackgroundTransparency = 0
+            if FrameToggleCircle and FrameToggleCircle.TweenPosition then
+                FrameToggleCircle:TweenPosition(UDim2.new(0.587, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
+            end
+            if FrameToggle3 then
+                FrameToggle3.BackgroundTransparency = 0
+            end
             
             if keybindMode == "Always" then
                 keyState = true
@@ -1710,8 +1722,12 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                 pcall(callback, true)
             end
         else
-            FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
-            FrameToggle3.BackgroundTransparency = 1
+            if FrameToggleCircle and FrameToggleCircle.TweenPosition then
+                FrameToggleCircle:TweenPosition(UDim2.new(0.127000004, 0, 0.222000003, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.2, true)
+            end
+            if FrameToggle3 then
+                FrameToggle3.BackgroundTransparency = 1
+            end
             
             if keybindMode == "Always" or keybindMode == "Hold" then
                 keyState = false
@@ -1734,18 +1750,32 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         MenuOpen = not MenuOpen
         
         if MenuOpen then
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
-                {Size = UDim2.new(0, 363, 0, 140)}):Play()
+            if DropdownContent then
+                DropdownContent.Visible = true
+            end
+            if tweensv and Toggle then
+                tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), 
+                    {Size = UDim2.new(0, 363, 0, 140)}):Play()
+            end
             
             task.delay(0.05, function()
-                Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 98)
+                if Tab and TabLayout then
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y + 98)
+                end
             end)
         else
-            tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
-                {Size = UDim2.new(0, 363, 0, 42)}):Play()
+            if DropdownContent then
+                DropdownContent.Visible = false
+            end
+            if tweensv and Toggle then
+                tweensv:Create(Toggle, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), 
+                    {Size = UDim2.new(0, 363, 0, 42)}):Play()
+            end
             
             task.delay(0.25, function()
-                Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                if Tab and TabLayout then
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                end
             end)
         end
     end
@@ -1755,110 +1785,140 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     -- Store connections specific to this keybind
     local keybindConnections = {}
     
-    table.insert(keybindConnections, Toggle.MouseButton1Click:Connect(function()
-        if not SelectingKey then
-            ToggleState(not toggled)
-        end
-    end))
-    
-    table.insert(keybindConnections, Toggle.MouseButton2Click:Connect(function()
-        ToggleMenu()
-    end))
-    
-    table.insert(keybindConnections, KeybindDisplay.MouseButton1Click:Connect(function()
-        ToggleMenu()
-    end))
-    
-    table.insert(keybindConnections, KeybindDisplay.MouseEnter:Connect(function()
-        tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
-        tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
-    end))
-    
-    table.insert(keybindConnections, KeybindDisplay.MouseLeave:Connect(function()
-        tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
-        tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.6}):Play()
-    end))
-    
-    table.insert(keybindConnections, KeybindButton.MouseButton1Click:Connect(function()
-        if SelectingKey then return end
-        
-        SelectingKey = true
-        KeybindButton.Text = "..."
-        
-        local connection
-        connection = uis.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.Keyboard then
-                assignedKey = input.KeyCode
-                keybindT.keyCode = assignedKey
-                KeybindDisplay.Text = "[" .. assignedKey.Name .. "]"
-                KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
-                SelectingKey = false
-                
-                if connection then
-                    connection:Disconnect()
-                end
+    if Toggle then
+        table.insert(keybindConnections, Toggle.MouseButton1Click:Connect(function()
+            if not SelectingKey then
+                ToggleState(not toggled)
             end
         end))
         
-        task.delay(5, function()
-            if SelectingKey then
-                SelectingKey = false
-                if connection then
-                    connection:Disconnect()
-                end
-                KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
-            end
-        end)
-    end))
+        table.insert(keybindConnections, Toggle.MouseButton2Click:Connect(function()
+            ToggleMenu()
+        end))
+    end
     
-    table.insert(keybindConnections, ToggleButton.MouseButton1Click:Connect(function()
-        if isChangingMode then return end
-        isChangingMode = true
-        keybindT:setMode("Toggle")
-        task.delay(0.3, function()
-            isChangingMode = false
-        end)
-    end))
-    
-    table.insert(keybindConnections, HoldButton.MouseButton1Click:Connect(function()
-        if isChangingMode then return end
-        isChangingMode = true
-        keybindT:setMode("Hold")
-        task.delay(0.3, function()
-            isChangingMode = false
-        end)
-    end))
-    
-    table.insert(keybindConnections, AlwaysButton.MouseButton1Click:Connect(function()
-        if isChangingMode then return end
-        isChangingMode = true
-        keybindT:setMode("Always")
-        task.delay(0.3, function()
-            isChangingMode = false
-        end)
-    end))
-    
-    for _, button in pairs(modeButtons) do
-        table.insert(keybindConnections, button.MouseEnter:Connect(function()
-            if button.Text ~= keybindMode then
-                tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
+    if KeybindDisplay then
+        table.insert(keybindConnections, KeybindDisplay.MouseButton1Click:Connect(function()
+            ToggleMenu()
+        end))
+        
+        table.insert(keybindConnections, KeybindDisplay.MouseEnter:Connect(function()
+            if tweensv and KeybindDisplay and KeybindDisplayStroke then
+                tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.5}):Play()
+                tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.3}):Play()
             end
         end))
         
-        table.insert(keybindConnections, button.MouseLeave:Connect(function()
-            if button.Text ~= keybindMode then
-                tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
+        table.insert(keybindConnections, KeybindDisplay.MouseLeave:Connect(function()
+            if tweensv and KeybindDisplay and KeybindDisplayStroke then
+                tweensv:Create(KeybindDisplay, TweenInfo.new(0.2), {BackgroundTransparency = 0.7}):Play()
+                tweensv:Create(KeybindDisplayStroke, TweenInfo.new(0.2), {Transparency = 0.6}):Play()
             end
         end))
     end
     
-    table.insert(keybindConnections, KeybindButton.MouseEnter:Connect(function()
-        tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
-    end))
+    if KeybindButton then
+        table.insert(keybindConnections, KeybindButton.MouseButton1Click:Connect(function()
+            if SelectingKey then return end
+            
+            SelectingKey = true
+            KeybindButton.Text = "..."
+            
+            local connection
+            connection = uis.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.Keyboard then
+                    assignedKey = input.KeyCode
+                    keybindT.keyCode = assignedKey
+                    if KeybindDisplay then
+                        KeybindDisplay.Text = "[" .. assignedKey.Name .. "]"
+                    end
+                    if KeybindButton then
+                        KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
+                    end
+                    SelectingKey = false
+                    
+                    if connection then
+                        connection:Disconnect()
+                    end
+                end
+            end))
+            
+            task.delay(5, function()
+                if SelectingKey then
+                    SelectingKey = false
+                    if connection then
+                        connection:Disconnect()
+                    end
+                    if KeybindButton then
+                        KeybindButton.Text = assignedKey.Name == "Unknown" and "None" or assignedKey.Name
+                    end
+                end
+            end)
+        end))
+    end
     
-    table.insert(keybindConnections, KeybindButton.MouseLeave:Connect(function()
-        tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
-    end))
+    if ToggleButton then
+        table.insert(keybindConnections, ToggleButton.MouseButton1Click:Connect(function()
+            if isChangingMode then return end
+            isChangingMode = true
+            keybindT:setMode("Toggle")
+            task.delay(0.3, function()
+                isChangingMode = false
+            end
+        end)))
+    end
+    
+    if HoldButton then
+        table.insert(keybindConnections, HoldButton.MouseButton1Click:Connect(function()
+            if isChangingMode then return end
+            isChangingMode = true
+            keybindT:setMode("Hold")
+            task.delay(0.3, function()
+                isChangingMode = false
+            end
+        end)))
+    end
+    
+    if AlwaysButton then
+        table.insert(keybindConnections, AlwaysButton.MouseButton1Click:Connect(function()
+            if isChangingMode then return end
+            isChangingMode = true
+            keybindT:setMode("Always")
+            task.delay(0.3, function()
+                isChangingMode = false
+            end
+        end)))
+    end
+    
+    for _, button in pairs(modeButtons) do
+        if button then
+            table.insert(keybindConnections, button.MouseEnter:Connect(function()
+                if button.Text ~= keybindMode and tweensv then
+                    tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.2}):Play()
+                end
+            end))
+            
+            table.insert(keybindConnections, button.MouseLeave:Connect(function()
+                if button.Text ~= keybindMode and tweensv then
+                    tweensv:Create(button, TweenInfo.new(0.2), {BackgroundTransparency = 0.4}):Play()
+                end
+            end))
+        end
+    end
+    
+    if KeybindButton then
+        table.insert(keybindConnections, KeybindButton.MouseEnter:Connect(function()
+            if tweensv then
+                tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(55, 55, 55)}):Play()
+            end
+        end))
+        
+        table.insert(keybindConnections, KeybindButton.MouseLeave:Connect(function()
+            if tweensv then
+                tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
+            end
+        end))
+    end
     
     -- Key input handling specific to this keybind
     local function handleKeyInput(input, gameProcessed)
@@ -1896,25 +1956,29 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end
     end
     
-    local keyInputConnection = uis.InputBegan:Connect(handleKeyInput)
-    local keyReleaseConnection = uis.InputEnded:Connect(handleKeyRelease)
-    
-    table.insert(keybindConnections, keyInputConnection)
-    table.insert(keybindConnections, keyReleaseConnection)
+    if uis then
+        local keyInputConnection = uis.InputBegan:Connect(handleKeyInput)
+        local keyReleaseConnection = uis.InputEnded:Connect(handleKeyRelease)
+        
+        table.insert(keybindConnections, keyInputConnection)
+        table.insert(keybindConnections, keyReleaseConnection)
+    end
     
     -- Cleanup function
     keybindT.destroy = function()
         for _, connection in ipairs(keybindConnections) do
-            connection:Disconnect()
+            pcall(function() connection:Disconnect() end)
         end
-        Toggle:Destroy()
+        pcall(function() Toggle:Destroy() end)
     end
 
     if default then
         ToggleState(true)
     end
 
-    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+    if Tab and TabLayout then
+        Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+    end
     
     return keybindT
 end
