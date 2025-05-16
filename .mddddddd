@@ -1274,7 +1274,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local keybindMode = "Toggle"
     local keyState = false
     local isChangingMode = false
-    local uniqueId = tostring(math.random(1, 1000000)) .. text -- Create a unique identifier
+    local uniqueId = tostring(math.random(1, 1000000)) .. text
 
     local Toggle = Instance.new("TextButton")
     local ToggleCorner = Instance.new("UICorner")
@@ -1530,7 +1530,6 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local HoldButton = createModeButton("Hold", 2)
     local AlwaysButton = createModeButton("Always", 3)
 
-    -- Use a local coroutine to avoid conflicts
     local updateCoroutine
     updateCoroutine = coroutine.wrap(function()
         while getgenv().libloaded and Toggle and Toggle.Parent do
@@ -1750,7 +1749,6 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
     local isHolding = false
     local connections = {}
 
-    -- Store all connections in a local table
     connections[#connections + 1] = Toggle.MouseButton1Click:Connect(function()
         if not SelectingKey then
             ToggleState(not toggled)
@@ -1851,7 +1849,8 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         tweensv:Create(KeybindButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}):Play()
     end)
 
-    -- Create unique connection functions for this specific keybind
+    local inputBeganConn, inputEndedConn
+
     local function handleInputBegan(input, gameProcessed)
         if gameProcessed then return end
         if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
@@ -1876,24 +1875,20 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         if input.UserInputType ~= Enum.UserInputType.Keyboard then return end
         if assignedKey == nil or input.KeyCode ~= assignedKey then return end
         
-        if keybindMode == "Hold" and isHolding then
+        if keybindMode == "Hold" and isHolding and toggled then
             isHolding = false
-            if toggled then
-                keyState = false
-                keybindT.keyState = keyState
-                pcall(callback, keyState)
-            end
+            keyState = false
+            keybindT.keyState = keyState
+            pcall(callback, keyState)
         end
     end
 
-    local inputBeganConn = uis.InputBegan:Connect(handleInputBegan)
-    local inputEndedConn = uis.InputEnded:Connect(handleInputEnded)
+    inputBeganConn = uis.InputBegan:Connect(handleInputBegan)
+    inputEndedConn = uis.InputEnded:Connect(handleInputEnded)
     
-    -- Add these connections to our local table too
     connections[#connections + 1] = inputBeganConn
     connections[#connections + 1] = inputEndedConn
 
-    -- Create a disconnect function for this specific keybind
     keybindT._disconnect = function()
         for _, connection in ipairs(connections) do
             if connection.Connected then
@@ -1902,7 +1897,6 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
         end
     end
 
-    -- Add this to the global library connections too, just to be safe
     if library.Conn then
         for _, conn in ipairs(connections) do
             table.insert(library.Conn, conn)
