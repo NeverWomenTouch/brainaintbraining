@@ -1635,7 +1635,7 @@ function tabcontent:KeybindT(text, default, keybind, callback, flag)
                 self.keyCode = key
                 KeybindDisplay.Text = "[" .. (key.Name == "Unknown" and "None" or key.Name) .. "]"
                 KeybindButton.Text = key.Name == "Unknown" and "None" or key.Name
-            elseif typeof(key) == "string" then
+            elseif type(key) == "string" then
                 local success, keyEnum = pcall(function()
                     return Enum.KeyCode[key]
                 end)
