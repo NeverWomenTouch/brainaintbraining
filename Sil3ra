@@ -14,8 +14,8 @@ if not getgenv().Executed then
 
         if compareinstances(Identifier, ContentProvider) then
             local Target = rawget(Value, 2)
-            hookfunction(Target, LPH_NO_VIRTUALIZE(function(...)
-            end))
+            hookfunction(Target, function(...)
+            end)
         end
     end
 end
